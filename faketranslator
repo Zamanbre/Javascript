@@ -1,0 +1,67 @@
+<html>
+<head>
+
+<!-- Das Script -->
+<script type="text/javascript">
+//<!--
+function translate() {
+	texta = document.getElementById('ursprung').value;
+	textb = texta
+	document.getElementById('ausgabe').innerHTML = textb;
+	
+	var min = 1
+	var max = 100
+	var zufall = Math.floor(Math.random() * (max - min + 1)) + min
+	
+	var chanceA = document.getElementById('grammatik').value;
+	var chance = chanceA
+	
+	//Unregelmäßig machen
+	var nummer = 2;
+	var zahl = Math.round(nummer*nummer/3*133/(1+nummer));
+	while (zahl >= 100) {
+		var zahl = zahl -100;
+	}
+	
+	if (chance > zufall) {
+		//übersetzt
+		translated = true
+	}
+	else {
+		//nicht übersetzt
+		translated = false
+	}
+	
+	//zufallstring = str(zufall)
+	debugtext = chanceA
+	//debugtext = zufall //"Zufallszahl:" + zufallstring
+	document.getElementById('debug').innerHTML = debugtext
+}
+</script>
+
+<!-- Style -->
+<style>
+
+</style>
+</head>
+
+<body style="text-align:center">
+<textarea id='ursprung' style='font-family:Trill;'>Ursprungstext</textarea>
+<br>
+ <label>Grammatik: 
+	<select id="grammatik" size="5"> 
+		<option value=1>grA</option> 
+		<option value=2>grB</option> 
+		<option value=3>grC</option> 
+		<option value=4>grD</option> 
+		<option value=5>grE</option> 
+	</select> 
+ </label>
+<br>
+<button onclick="translate();">Übersetzen</button>
+<br>
+<textarea id='ausgabe' style='font-family:arial;'></textarea>
+<br>
+<textarea id='debug'></textarea>
+</body>
+</html>
