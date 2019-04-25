@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>Alphabet der 100 Zeichen</title>
+</head>
+<body>
+<link rel="stylesheet" href="fonts.css" type="text/css" charset="utf-8" />
+
+<form name="eingabeformular">
+<p align=center><textarea type="text" id="eingabe"  size=50>Hier Text eingeben</textarea></p>
+<p align=center><input type="button" id="druecker" value="Übersetzen" onClick="ubersetzen()"></p>
+</form>
+
+<script type='text/javascript'>
+<!-- // Beispielsatz: Dies ist ein simpler Beispieltext, mit dem ich dieses Script veranschaulichen möchte. Dieser Satz ist ansich unnötig und existiert nur, damit der Text noch etwas länger ist!
+// Die Geschichte der Waage mit Hasen und Eseln, erklärend, was Gleichgewicht durch Vielfalt meint Was uns allen verständlich sein muss wenn wir von Gleichgewicht reden, weil wir versuchen es zu erreichen, ist die Erkenntnis, dass das Gleichgewicht niemals alleine erreicht werden wird. Folgt mir für einen Augenblick und lasst ein Bild in Euren Gedanken entstehen. Stellt euch eine Waage vor, auf deren einer Waagschalen Hasen leben, auf deren anderer Esel. Doch können die Esel die Hasen nicht sehen und die Hasen sehen die Esel nicht. Hasen und Esel aber, das müsst ihr wissen, leben ihr Leben auf unterschiedliche Weise. Die Esel lieben den Tag und essen wenn es hell ist und schlafen, wenn es dunkel wird. Die Hasen aber lieben die Dämmerung und erst wenn das Licht schwindet, beginnen sie ihr Mahl. Wenn beide ihr Leben auf ihre Weise Dinge leben, beide nur nach Herzenslust essen, wird die Waage immer schwanken. Immer wenn die Hasen essen, senkt sich ihre Schale und die der Esel hebt sich. Und immer wenn die Esel essen wird sich ihre Schale senken und die der Hasen heben.  Stellt euch nun vor, dieses Schwanken missfällt den Eseln und sie möchten Ruhe in die Waage bringen. Also entschließen sich die Esel, immer dann zu essen, wenn ihre Waagschale sich hebt und immer dann zu fasten, wenn ihre Waagschale sich senkt.  Wäre auf der anderen Waagschale ein Gewicht oder ein Stein, so würde der Plan wohl aufgehen. Aber auch auf der anderen Waagschale sind die Hasen, welche nach belieben speisen und ihr Leben leben. Darum geht der Plan der Esel nicht auf, denn die Esel können niemals wissen, wann genau die Hasen essen, sie können niemals wissen, wie viel die Hasen essen und können niemals wissen, wann genau die Hasen wieder aufhören. Denn ihre Lebensweisen sind zu unterschiedlich.  Und durch den Versuch der Esel, alleine das Gleichgewicht herzustellen, beginnt die Waage also nur noch mehr zu schwanken, da sie niemals richtig und auch niemals zum richtigen Zeitpunkt reagieren. Schließlich verzweifeln die Esel, da alle ihre Mühen vergebens waren, ja sie verschlimmerten ihr Problem sogar. Und so fingen sie an fürchterlich zu jammern. Die Hasen aber hörten das Jammern und riefen den Eseln hinüber: Warum jammert Ihr? Da sagten die Esel: „Unsere Waagschaale schwankte uns zu sehr, da immer wenn wir aßen, unsere Seite hinab ging und Eure sich hebte. Und immer wenn Ihr aßt, hebte sich unsere Schaale, da Eure sich senkte. Also versuchten wir immer dann zu essen, wenn unsere Waagschale sich hebte, um dagegen an zu arbeiten. Aber so sehr wir es auch versuchten, das Schwanken wurde nur schlimmer! Wir wussten einfach nicht, wann und wie Ihr esst, da Euer Leben so anders ist als unseres.“ Die Hasen aber dachten über das Problem des Esels nach und sprachen: „Verzweifelt nicht! Wir verstehen Eure Sorgen und zusammen können wir einen Unterschied machen. Sprechen wir uns ab, dass wir von nun an immer gemeinsam essen und die Waage wird nie wieder schwanken!“ Und eben dies taten sie und lernten daraus: Denn im Leben kann ein Gleichgewicht niemals nur von einer Seite kommen, nur alle Seiten gemeinsam können zu ihm führen.
+
+//----Hier kann was verändert werden
+//var text	=	'Die Geschichte der Waage mit Hasen und Eseln, erklärend, was Gleichgewicht durch Vielfalt meint Was uns allen verständlich sein muss wenn wir von Gleichgewicht reden, weil wir versuchen es zu erreichen, ist die Erkenntnis, dass das Gleichgewicht niemals alleine erreicht werden wird. Folgt mir für einen Augenblick und lasst ein Bild in Euren Gedanken entstehen. Stellt euch eine Waage vor, auf deren einer Waagschalen Hasen leben, auf deren anderer Esel. Doch können die Esel die Hasen nicht sehen und die Hasen sehen die Esel nicht. Hasen und Esel aber, das müsst ihr wissen, leben ihr Leben auf unterschiedliche Weise. Die Esel lieben den Tag und essen wenn es hell ist und schlafen, wenn es dunkel wird. Die Hasen aber lieben die Dämmerung und erst wenn das Licht schwindet, beginnen sie ihr Mahl. Wenn beide ihr Leben auf ihre Weise Dinge leben, beide nur nach Herzenslust essen, wird die Waage immer schwanken. Immer wenn die Hasen essen, senkt sich ihre Schale und die der Esel hebt sich. Und immer wenn die Esel essen wird sich ihre Schale senken und die der Hasen heben.  Stellt euch nun vor, dieses Schwanken missfällt den Eseln und sie möchten Ruhe in die Waage bringen. Also entschließen sich die Esel, immer dann zu essen, wenn ihre Waagschale sich hebt und immer dann zu fasten, wenn ihre Waagschale sich senkt.  Wäre auf der anderen Waagschale ein Gewicht oder ein Stein, so würde der Plan wohl aufgehen. Aber auch auf der anderen Waagschale sind die Hasen, welche nach belieben speisen und ihr Leben leben. Darum geht der Plan der Esel nicht auf, denn die Esel können niemals wissen, wann genau die Hasen essen, sie können niemals wissen, wie viel die Hasen essen und können niemals wissen, wann genau die Hasen wieder aufhören. Denn ihre Lebensweisen sind zu unterschiedlich.  Und durch den Versuch der Esel, alleine das Gleichgewicht herzustellen, beginnt die Waage also nur noch mehr zu schwanken, da sie niemals richtig und auch niemals zum richtigen Zeitpunkt reagieren. Schließlich verzweifeln die Esel, da alle ihre Mühen vergebens waren, ja sie verschlimmerten ihr Problem sogar. Und so fingen sie an fürchterlich zu jammern. Die Hasen aber hörten das Jammern und riefen den Eseln hinüber: Warum jammert Ihr? Da sagten die Esel: „Unsere Waagschaale schwankte uns zu sehr, da immer wenn wir aßen, unsere Seite hinab ging und Eure sich hebte. Und immer wenn Ihr aßt, hebte sich unsere Schaale, da Eure sich senkte. Also versuchten wir immer dann zu essen, wenn unsere Waagschale sich hebte, um dagegen an zu arbeiten. Aber so sehr wir es auch versuchten, das Schwanken wurde nur schlimmer! Wir wussten einfach nicht, wann und wie Ihr esst, da Euer Leben so anders ist als unseres.“ Die Hasen aber dachten über das Problem des Esels nach und sprachen: „Verzweifelt nicht! Wir verstehen Eure Sorgen und zusammen können wir einen Unterschied machen. Sprechen wir uns ab, dass wir von nun an immer gemeinsam essen und die Waage wird nie wieder schwanken!“ Und eben dies taten sie und lernten daraus: Denn im Leben kann ein Gleichgewicht niemals nur von einer Seite kommen, nur alle Seiten gemeinsam können zu ihm führen.'; //Originaltext
+
+//Welche Zeichen sind in welcher Schrift vorhanden
+var ZLatein = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZäöüÄÖÜß1234567890';
+//var ZFraktur = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-!:?äöüÄÖÜß';
+var ZRunen 	= 'abcdefghijklmnopqrstuwyzABCDEFGHIJKLMNOPQRSTUWYZ@<>';
+var ZGriechisch = 'abdefgiklmnoprstxyzABDEFGIKLMNOPRSTXYZ@#%';
+var ZHebrew = 'bcdfghjklmnpqrstwzBCDFGHJKLMNPQRSTWZ#$123456789';
+
+//----Hier nicht!
+function ubersetzen() {
+var text = document.getElementById('eingabe').value;
+var endtext	= text.replace(/th/gi,'@').replace(/ng/gi,'<').replace(/st/gi,'>').replace(/sch/gi,'$').replace(/ch/gi,'#').replace(/ps/gi,'%'); //Sonderzeichen für Sonderlaute einsetzen
+var zeichen = endtext.split('');
+var x = zeichen.length;
+
+//----Debug Infos
+/*
+document.write(endtext);
+document.write('<br>',zeichen);
+document.write('<br>Zeichenanzahl: ',x,'<br>');
+*/
+
+//----Schleife, die den Text verarbeitet. Jedes Zeichen wird zu einem eigenen span.
+for (var i = 0; i < x; i++) {
+	document.write('<span id="op',i,'">',zeichen[i],'</span>');
+	var schriften = [];
+
+//Alphabete checken - Ein Alphabet kann nur ausgewählt werden, wenn das Zeichen vorhanden ist
+	var jein = ZLatein.includes(zeichen[i])
+	if (jein == true) {
+		schriften.push('Berlin Sans FB'); //Schriftart für ZLatein
+	};
+	
+	/*	var jein = ZFraktur.includes(zeichen[i])
+	if (jein == true) {
+		schriften.push('TypographerFraktur'); //Schriftart für ZFraktur
+	}; */
+	
+	var jein = ZRunen.includes(zeichen[i])
+	if (jein == true) {
+		schriften.push('Runen'); //Schriftart für ZRunen
+	};
+	
+	var jein = ZGriechisch.includes(zeichen[i])
+	if (jein == true) {
+		schriften.push('Griechisch'); //Schriftart für ZGriechisch
+	};
+	
+	var jein = ZHebrew.includes(zeichen[i])
+	if (jein == true) {
+		schriften.push('Hebrew'); //Schriftart für ZHebrew
+	};
+
+	var zz = Math.floor(Math.random() * (schriften.length - 1 + 1)) + 0;
+	document.getElementById("op" + i).style.fontFamily = schriften[zz];
+	//----Debus Infos
+	/*
+	document.write('<br>',zz,'<br>');
+	document.write('<b>Zeichen:</b>',zeichen[i],'<br>');
+	document.write('<b>Mögliche Schriften:</b> ',schriften,'<br>');
+	document.write('<b>Ausgewählte Schrift:</b> ',schriften[zz],'<br><br>');
+	*/
+}
+document.write('<br><br><a href="javascript:location.reload()">Zurück (Chrome)</a>');
+document.write('<br><a href="javascript:history.back()">Zurück (Firefox)</a>');
+}
+
+//-->
+</script>
+</body>
+</html>
