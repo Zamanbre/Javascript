@@ -1,42 +1,102 @@
 <html>
 <head>
-
-<!-- Das Script -->
-<script type="text/javascript">
-//<!--
-function translate() {
-	texta = document.getElementById('ursprung').value;
-	textb = texta
-	document.getElementById('ausgabe').innerHTML = textb;
-	
-	var min = 1
-	var max = 100
-	var zufall = Math.floor(Math.random() * (max - min + 1)) + min
-	
-	var chanceA = document.getElementById('grammatik').value;
-	var chance = chanceA
-	
-	//Unregelmäßig machen
-	var nummer = 2;
-	var zahl = Math.round(nummer*nummer/3*133/(1+nummer));
-	while (zahl >= 100) {
-		var zahl = zahl -100;
-	}
-	
-	if (chance > zufall) {
-		//übersetzt
-		translated = true
-	}
-	else {
-		//nicht übersetzt
-		translated = false
-	}
-	
-	//zufallstring = str(zufall)
-	debugtext = chanceA
-	//debugtext = zufall //"Zufallszahl:" + zufallstring
-	document.getElementById('debug').innerHTML = debugtext
+<style>
+.slider {
+  background: #aaaaff;
+  opacity: 0.7;
+  transition: opacity .2s;
 }
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-moz-range-thumb {
+  background: #0000ff;
+  cursor: pointer;
+}
+</style>
+
+<script type="text/javascript">
+<!--
+//Ursprungssprachen Werte
+//  Sprache = [0 Schriftart, 1 Grammatik, 2 Anzahl Deklinationen, 3 Anzahl Konjugationen, 4 Anzahl Zeitformen, 5 Schriftform]
+var trill = ["Trill", 20, 8, 4, 8, 0];
+
+var schwierigkeit = 10; //Schwierigkeitsgrad erhöt den Faktor, um den Falscheingaben ins Gewicht fallen
+
+function translate() {
+	//resetten
+	document.getElementById('debug').innerHTML = "Debug: <br>";
+	document.getElementById('ausgabe').innerHTML = " ";
+	
+	var texta = document.getElementById('ursprung').value; //Ursprungstext
+	var textb = texta.split(''); //Text zerlegen
+	var x = textb.length;
+	
+	var fremdsprache = trill //ausgewählte Fremdsprache
+	
+	//Schriften festlegen
+	var schrift = "Arial";
+	var schriftfremd = fremdsprache[0];
+
+	//Wie viel wird übersetzt?	
+	var anzahlparameter = 5;
+	var auswahl = [];
+	var chance = [];
+	var faktor = [0,1.5,1,1,1,1]; //Faktor, wie sehr ein Bereich ins Gewicht fallen soll
+	for (var i = 1; i <= anzahlparameter; i++) {
+		auswahl[i] = document.getElementById('input'+i).value;
+		chance[i] = 100 - (Math.abs(fremdsprache[i] - auswahl[i]))*schwierigkeit;
+		
+		//debug
+		document.getElementById('debug').innerHTML += "<br>I:"+i;
+		document.getElementById('debug').innerHTML += " Auswahl:"+auswahl[i];
+		document.getElementById('debug').innerHTML += " Chance:"+chance[i];
+	}
+	
+	document.getElementById('debug').innerHTML += "<br>Vollstängige Chance: "+chance;
+	
+	//Gesamtwerte
+	var maxpunktzahl = 0;
+	var chanceGes = 0;
+	for (var i = 1; i <= anzahlparameter; i++) {
+		maxpunktzahl += 100 * faktor[i]; //gesamt erreichbare Punktzahl
+		chanceGes += chance[i] * faktor[i]; //gesamt erreichte Punktzahl
+	}
+	var endchance = chanceGes*99/maxpunktzahl;
+	
+	
+	for (var i = 0; i < x; i++) {
+		//Textfragmente als einzelne Spans ausgeben
+		document.getElementById("ausgabe").innerHTML += '<span id="op'+i+'">'+textb[i]+'</span>';
+		
+		//Unregelmäßig machen - zahl entspricht der Schwierigkeit eines einzelnen Zeichens
+		var zahl = Math.round(i*i/3*133/(1+i));
+		while (zahl >= 100) {
+			var zahl = zahl -100;	
+		}
+		
+		//debug
+		//document.getElementById('debug').innerHTML += "<br>I: "+i+":";
+		//document.getElementById('debug').innerHTML += "<br>Zahl: "+zahl+",";
+		
+		if (endchance >= zahl) {
+			//übersetzt
+			document.getElementById("op"+i).style.fontFamily = schrift;
+		}
+		else {
+			//nicht übersetzt
+			document.getElementById("op"+i).style.fontFamily = schriftfremd;
+		}	
+	}
+
+	document.getElementById('debug').innerHTML += "<br>EndChance: "+endchance;
+	//kommt durch?
+	//document.getElementById('debug').innerHTML += "hierher";
+	document.getElementById('debug').innerHTML += "<br>Kommt durch!";
+}
+//-->
 </script>
 
 <!-- Style -->
@@ -48,20 +108,67 @@ function translate() {
 <body style="text-align:center">
 <textarea id='ursprung' style='font-family:Trill;'>Ursprungstext</textarea>
 <br>
- <label>Grammatik: 
-	<select id="grammatik" size="5"> 
-		<option value=1>grA</option> 
-		<option value=2>grB</option> 
-		<option value=3>grC</option> 
-		<option value=4>grD</option> 
-		<option value=5>grE</option> 
-	</select> 
- </label>
+<label>Grammatik:
+	<select id="input1" size="6"> 
+		<option value=0>Typ A</option> 
+		<option value=20>Typ B</option> 
+		<option value=40>Typ C</option> 
+		<option value=60>Typ D</option> 
+		<option value=80>Typ E</option> 
+		<option value=100>Typ F</option>
+	</select>
+</label>
+<label>Anzahl Deklinationen:
+	<input id="input2" type="range" min="1" max="100" orient="vertical" class="slider"></input>
+	<output id="input2Op" for="input2">1</output>
+</label>
+<label>Anzahl Konjugationen:
+	<input id="input3" type="range" min="1" max="100" orient="vertical" class="slider"></input>
+	<output id="input3Op" for="input3">1</output>
+</label>
+<label>Anzahl Zeitformen:
+	<input id="input4" type="range" min="1" max="100" orient="vertical" class="slider"></input>
+	<output id="input4Op" for="input4">1</output>
+</label>
+<label>Schriftform:
+	<select id="input5" size="4"> 
+		<option value=0>Alphabetschrift</option> 
+		<option value=30>Silbenschrift</option> 
+		<option value=70>Wortschrift</option> 
+		<option value=100>Bildschrift</option> 
+	</select>
+</label>
+ 
 <br>
 <button onclick="translate();">Übersetzen</button>
 <br>
-<textarea id='ausgabe' style='font-family:arial;'></textarea>
+<div id='ausgabe' style='font-family:arial;'></div>
 <br>
-<textarea id='debug'></textarea>
+<div id='debug'></div>
 </body>
+<footer>
+<script type="text/javascript">
+//Anzeige für Slider 1
+var slider = document.getElementById("input2");
+var output = document.getElementById("input2Op");
+output.innerHTML = slider.value;
+slider.oninput = function() {
+  output.innerHTML = this.value;
+} 
+//Anzeige für Slider 2
+var slider2 = document.getElementById("input3");
+var output2 = document.getElementById("input3Op");
+output2.innerHTML = slider2.value; 
+slider2.oninput = function() {
+  output2.innerHTML = this.value;
+} 
+//Anzeige für Slider 3
+var slider3 = document.getElementById("input4");
+var output3 = document.getElementById("input4Op");
+output3.innerHTML = slider3.value; 
+slider3.oninput = function() {
+  output3.innerHTML = this.value;
+} 
+</script>
+</footer>
 </html>
