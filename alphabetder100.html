@@ -1,88 +1,123 @@
 <html>
 <head>
 <title>Alphabet der 100 Zeichen</title>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet" href="stylesheet.css" type="text/css" charset="utf-8" />
 </head>
 <body>
 <link rel="stylesheet" href="fonts.css" type="text/css" charset="utf-8" />
 
 <form name="eingabeformular">
-<p align=center><textarea type="text" id="eingabe"  size=50>Hier Text eingeben</textarea></p>
+<p align=center><textarea type="text" id="eingabe"  size=50 style="width: 80%;">Hier Text eingeben</textarea></p>
 <p align=center><input type="button" id="druecker" value="Übersetzen" onClick="ubersetzen()"></p>
 </form>
+<p align=center><div type="text" id="output"  size=50></div></p>
+<!-- Debug Fenster - Für Debug Infos "hidden" entfernen! -->
+<div id='debug' hidden>Debug</div>
 
 <script type='text/javascript'>
 <!-- // Beispielsatz: Dies ist ein simpler Beispieltext, mit dem ich dieses Script veranschaulichen möchte. Dieser Satz ist ansich unnötig und existiert nur, damit der Text noch etwas länger ist!
 
 //----Hier kann was verändert werden
-//var text	= "Dies ist ein simpler Beispieltext, mit dem ich dieses Script veranschaulichen möchte. Dieser Satz ist ansich unnötig und existiert nur, damit der Text noch etwas länger ist!"; //Originaltext
+//var text	=	'Dies ist ein simpler Beispieltext, mit dem ich dieses Script veranschaulichen möchte. Dieser Satz ist ansich unnötig und existiert nur, damit der Text noch etwas länger ist!'; //Originaltext
+document.getElementById('debug').innerHTML = "<br>start";
 
 //Welche Zeichen sind in welcher Schrift vorhanden
-var ZLatein = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZäöüÄÖÜß1234567890';
-//var ZFraktur = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-!:?äöüÄÖÜß';
-var ZRunen 	= 'abcdefghijklmnopqrstuwyzABCDEFGHIJKLMNOPQRSTUWYZ@<>';
-var ZGriechisch = 'abdefgiklmnoprstxyzABDEFGIKLMNOPRSTXYZ@#%';
-var ZHebrew = 'bcdfghjklmnpqrstwzBCDFGHJKLMNPQRSTWZ#$123456789';
+var schriften = ['livingstone','Runen','Griechisch','Hebraeisch']; //gleiche Reihenfolge wie bei sprachenzeichen - Hebräisch muss als 4. kommen! (siehe Extras unten)
+var sprachenzeichen = ['abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZäöüÄÖÜß1234567890,;.:-_!?)("&+=´` ','abcdefghijklmnopqrstuwyzABCDEFGHIJKLMNOPQRSTUWYZ@<>','abdefgiklmnoprstxyzABDEFGIKLMNOPRSTXYZ@#%','abcdefghijklmnopqrstuwzBCDFGHJKLMNPQRSTWZ#$123456789'];
+var satzzeichen = ',;.:-_!?)("&+=´`/\ °';
+var sonderzeichen = '@<>$#%';
+var vokale = 'aeiou';
 
+	document.getElementById("debug").innerHTML += "<br>Variablen definiert";
 //----Hier nicht!
 function ubersetzen() {
-var text = document.getElementById('eingabe').value;
-var endtext	= text.replace(/th/gi,'@').replace(/ng/gi,'<').replace(/st/gi,'>').replace(/sch/gi,'$').replace(/ch/gi,'#').replace(/ps/gi,'%'); //Sonderzeichen für Sonderlaute einsetzen
-var zeichen = endtext.split('');
-var x = zeichen.length;
-
-//----Debug Infos
-/*
-document.write(endtext);
-document.write('<br>',zeichen);
-document.write('<br>Zeichenanzahl: ',x,'<br>');
-*/
-
-//----Schleife, die den Text verarbeitet. Jedes Zeichen wird zu einem eigenen span.
-for (var i = 0; i < x; i++) {
-	document.write('<span id="op',i,'">',zeichen[i],'</span>');
-	var schriften = [];
-
-//Alphabete checken - Ein Alphabet kann nur ausgewählt werden, wenn das Zeichen vorhanden ist
-	var jein = ZLatein.includes(zeichen[i])
-	if (jein == true) {
-		schriften.push('Berlin Sans FB'); //Schriftart für ZLatein
-	};
+	//--debug
+	var zeit1 = Date.now(); //aktuelle Zeit
+	document.getElementById("debug").innerHTML = "Funktion gestartet";
 	
-	/*	var jein = ZFraktur.includes(zeichen[i])
-	if (jein == true) {
-		schriften.push('TypographerFraktur'); //Schriftart für ZFraktur
-	}; */
-	
-	var jein = ZRunen.includes(zeichen[i])
-	if (jein == true) {
-		schriften.push('Runen'); //Schriftart für ZRunen
-	};
-	
-	var jein = ZGriechisch.includes(zeichen[i])
-	if (jein == true) {
-		schriften.push('Griechisch'); //Schriftart für ZGriechisch
-	};
-	
-	var jein = ZHebrew.includes(zeichen[i])
-	if (jein == true) {
-		schriften.push('Hebrew'); //Schriftart für ZHebrew
-	};
+	var text = document.getElementById('eingabe').value;
+	var endtext	= text.replace(/\n/gi,'°').replace(/th/gi,'@').replace(/ng/gi,'<').replace(/st/gi,'>').replace(/sch/gi,'$').replace(/ch/gi,'#').replace(/ps/gi,'%'); //Sonderzeichen für Sonderlaute einsetzen; g= global; i=casesensitve
+	var zeichen = endtext.split('');
+	var x = zeichen.length;
 
-	var zz = Math.floor(Math.random() * (schriften.length - 1 + 1)) + 0;
-	document.getElementById("op" + i).style.fontFamily = schriften[zz];
-	//----Debus Infos
+	//Output leeren
+	document.getElementById("output").innerHTML = "";
+	//----Debug Infos
 	/*
-	document.write('<br>',zz,'<br>');
-	document.write('<b>Zeichen:</b>',zeichen[i],'<br>');
-	document.write('<b>Mögliche Schriften:</b> ',schriften,'<br>');
-	document.write('<b>Ausgewählte Schrift:</b> ',schriften[zz],'<br><br>');
+	document.write(endtext);
+	document.write('<br>',zeichen);
+	document.write('<br>Zeichenanzahl: ',x,'<br>');
 	*/
-}
-document.write('<br><br><a href="javascript:location.reload()">Zurück (Chrome)</a>');
-document.write('<br><a href="javascript:history.back()">Zurück (Firefox)</a>');
+
+	//----Schleife, die den Text verarbeitet. Jedes Zeichen wird zu einem eigenen span.
+	//----WICHTIG: Alle Debug Angaben bremsen das Script massiv, deshalb müssen sie unbedingt auskommentiert werden, selbst wenn das div "debug" hidden ist!
+	for (var i = 0; i < x; i++) {
+		//--Debug
+		//document.getElementById("debug").innerHTML += "<br><br><b>Schleife Nr."+i+"</b>";
+		
+		var zeichensatzzeichen = satzzeichen.includes(zeichen[i]);
+		if (zeichensatzzeichen == true) {
+			var zz = 0; //Falls das Zeichen ein Satzzeichen ist, soll es immer in dieser Schrift sein
+		}
+		else {
+			var zz = Math.floor(Math.random() * schriften.length); //Zufallszahl
+		}
+		
+		//document.getElementById("debug").innerHTML += "<br>zeichensatzzeichen: "+zeichensatzzeichen;
+		//document.getElementById("debug").innerHTML += "<br>ZZ: "+zz;
+		//document.getElementById("debug").innerHTML += "<br>Zeichen: "+zeichen[i];
+		//document.getElementById("debug").innerHTML += "<br>Sprachenzeichen: "+sprachenzeichen[zz];
+		
+		var zeichenvorhanden = sprachenzeichen[zz].includes(zeichen[i]);
+		var istsonderzeichen = sonderzeichen.includes(zeichen[i]);
+		
+		//document.getElementById("debug").innerHTML += "<br>zeichenvorhanden: "+zeichenvorhanden;
+		
+		//Sonderregeln für hebräische Vokale.
+		var istzeichenvokal = vokale.includes(zeichen[i]);
+		var istnaechsteszeichenvokal = vokale.includes(zeichen[i+1]);
+		if (istzeichenvokal == true && istnaechsteszeichenvokal == true && zz == 3) { //3 = Hebräisch //Wenn ein Vokal auf das aktuelle Zeichen folgt, darf es nicht Hebräisch sein!
+			var zz = 0; //nehme stattdessen Schrift 0
+		}
+		if (zeichen[i-1] == " " && zz == 3 && istzeichenvokal == true){ //3 = Hebräisch //Am Wortanfang darf kein hebräischer Vokal stehen
+			var zz = 0;
+		}
+		
+		
+		if (zeichenvorhanden == false && istsonderzeichen == true) {
+			zeichen[i] = zeichen[i].replace('@','th').replace('<','ng').replace('>','st').replace('$','sch').replace('#','ch').replace('%','ps'); //Sonderzeichen nicht vorhanden, deshalb umschreiben
+			//document.getElementById("debug").innerHTML += "<br> <i>Zurückreplaced</i>";
+		}
+		else if (zeichenvorhanden == false && istsonderzeichen == false) { //Die Schrift unterstützt das Zeichen nicht, obwohl es ein normaler Buchstabe ist
+			var zz = 0; //dann nehme stattdessen Schrift 0
+		}
+		zeichen[i] = zeichen[i].replace('°',"<br>"); //Zeilenumbrüche
+		
+		//document.getElementById("debug").innerHTML += "<br>Zeichen: "+zeichen[i];
+		
+		document.getElementById("output").innerHTML += '<span id="op'+i+'">'+zeichen[i]+'</span>'; //Zeichen abdrucken
+		document.getElementById("op" + i).style.fontFamily = schriften[zz]; //Schriftart einstellen
+		if (zz == 2) { //Falls die Schrift Griechisch ist
+		document.getElementById("op" + i).style.fontSize = "larger"; //mach die Schrift größer, denn sonst sieht es blöd aus!
+		}
+		
+		//merken, welche Schrift gewählt wurde
+		gewaehlteschriften = [];
+		gewaehlteschriften.push(zz);
+	}
+	//--debug
+	var zeit2 = Date.now()-zeit1; //benötigte Zeit
+	document.getElementById("debug").innerHTML = "<br>benötigte Zeit: "+zeit2;
 }
 
 //-->
 </script>
 </body>
+<footer>
+<br>
+<a href="alphabetder100old.html">Zur alten Version</a> - Die alte Version unterstützt keine Zeilenumbrüche und vermisst einige andere Funktionen, läuft aber teilweise flüssiger.
+<br>
+<a href="impressum.html">Impressum</a>
+</footer>
 </html>
