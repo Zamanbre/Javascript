@@ -1,10 +1,28 @@
 <html>
 <head>
+<title>Universaltranslator</title>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet" href="stylesheet.css" type="text/css" charset="utf-8" />
 <style>
+/*--Der Indikatorkreis--*/
+/*Ist notwendig*/
+div.kreis {
+  margin: 0.1% 48%;
+  border-radius: 50px;
+  background-color: #d0d0d0
+}
+
+/*--Slider--*/
+/*nicht unbedingt notwendig*/
 .slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  outline: none;
   background: #aaaaff;
   opacity: 0.7;
   transition: opacity .2s;
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  height: 5em;
+  border-radius: 1em;
 }
 
 .slider:hover {
@@ -14,59 +32,230 @@
 .slider::-moz-range-thumb {
   background: #0000ff;
   cursor: pointer;
+  width: 10%;
+  height: 100%;
+  border-radius: 20%;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 10%; /* Set a specific slider handle width */
+  height: 100%; /* Slider handle height */
+  background: #0000ff; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+  border-radius: 20%;
+}
+
+
+/*--Der Rest--*/
+/*ändern wie es beliebt*/
+body {
+	text-align: center;
+	background-color: black;
+	color: #d0d0d0;
+	font-family: LCARSGTJ3, Helvetica, Arial, sans-serif;
+	font-size: 1em;
+}
+label {
+	color: black;
+	font-size: 1.5em;
+	line-height: 100%;
+	background-color: #efc113;
+	border-radius: 1em;
+	padding: 0.1em;
+}
+h1 {
+	background-color: #d8a36f;
+	color: black;
+	border-radius: 1em;
+	padding: 0.1em;
+	font-size: 2.5em;
+}
+
+.einheit {
+	display: grid;
+	align-items: start;
+	margin: 1em;
+}
+
+#inputs {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+output {
+	font-size: 1.5em;
+}
+
+input, select{
+	background-color: #d0d0d0;
+	color: black;
+	font-family: LCARSGTJ3, Helvetica, Arial, sans-serif;
+	font-size: 1em;
+	border-radius: 1em;
+}
+input[type="text"] {
+	height: 2em;
+}
+#ausgabe {
+	font-size: 2em;
+}
+button {
+	background-color: #ff9c00;
+	color: black;
+	font-family: LCARSGTJ3, Helvetica, Arial, sans-serif;
+	font-size: 2em;
+	border-radius: 1em;
+}
+#ursprung {
+	height: 2em;
+	width: 80%;
 }
 </style>
 
 <script type="text/javascript">
-<!--
+<!-- // TO-DO: Worttrenner, Majuskel/Minuskel, Satzzeichen, Rechtschreibung normiert; Sprachtyp isolierend, flektierend, agglutinierend; Wortarten; Unregelmäßigkeiten; Komposita; Derivation; Verwandschaft; hochfrequente typische Wörter
+//Script made by Zamanbre; Zamanbre@web.de
+/*Fonts made by:
+07-GHOST ©Yuki Amemiya and Yukino Ichihara
+*/
+
 //Ursprungssprachen Werte
-//  Sprache = [0 Schriftart, 1 Grammatik, 2 Anzahl Deklinationen, 3 Anzahl Konjugationen, 4 Anzahl Zeitformen, 5 Schriftform]
-var trill = ["Trill", 20, 8, 4, 8, 0];
+//Sprache = [0 Schriftart, 1 Grammatik, 2 Anzahl Deklinationen, 3 Anzahl Konjugationen, 4 Anzahl Zeitformen, 5 Schriftform]
+var anzahlparameter = 5; //Anzahl der Parameter, die eine Sprache haben kann
+
+var unbekannt = new Object();
+unbekannt.eigenschaften = ["zaiphon"];
+unbekannt.worte = [];
+
+var trill = new Object();
+trill.eigenschaften = ["Trill", 1, 8, 4, 8, 0];
+trill.worte = ["zhian'tara"];
+
+var mvulcan = new Object();
+mvulcan.eigenschaften= ["mvulcan", 4, 4, 4, 14, 0];
+mvulcan.worte = ["Semara", "runo"];
+
+var voth = new Object();
+voth.eigenschaften= ["voth", 0, 10, 2, 2, 2];
+voth.worte = ["Haluk","Odala","Tova","Veer"];
 
 var schwierigkeit = 10; //Schwierigkeitsgrad erhöt den Faktor, um den Falscheingaben ins Gewicht fallen
+var faktor = [0,10,1,1,1,20]; //Faktor, wie sehr ein Bereich ins Gewicht fallen soll
+var max = [0,5,50,50,50,3]; //maximal erreichbarer Wert
 
-function translate() {
+var fremdsprache = trill; //ausgewählte Fremdsprache
+
+//Schriften festlegen
+var schrift = "LCARSGTJ3, Helvetica, Arial, sans-serif";
+var schriftfremd = fremdsprache.eigenschaften[0];
+//originaltext unleserlich machen
+window.onload = function () {
+    document.getElementById('ursprung').style.fontFamily= schriftfremd;
+};
+
+//>>>>>>>>>>Sprache wechseln
+function changelang() {
+	//--debug
+	document.getElementById('debug').innerHTML += "<br>Chancelang aktiviert.";
+	
+	schwierigkeit = document.getElementById('schwierigkeitinput').value;
+	var gewaehltesprache = document.getElementById('langinput').value;
+	if (gewaehltesprache == "trill") {
+		fremdsprache = trill;
+	}
+	else if (gewaehltesprache == "unbekannt") {
+		fremdsprache = unbekannt;
+		//unbekannt bekommt Zufallswerte
+	for (var i = 1; i <= anzahlparameter; i++) {
+		var zz = Math.floor(Math.random() * (max[i] + 1));
+		unbekannt.eigenschaften[i] = zz;
+	}
+	}	
+	else if (gewaehltesprache == "mvulcan") {
+		fremdsprache = mvulcan;
+	}
+	else if (gewaehltesprache == "voth") {
+		fremdsprache = voth;
+	}	
+	
+	schriftfremd = fremdsprache.eigenschaften[0];
+	document.getElementById('ursprung').style.fontFamily= schriftfremd;
+	//--debug
+	document.getElementById('debug').innerHTML += "<br>Chancelang durch.";
+}
+
+
+//>>>>>>>>>>Übersetzen
+function faketranslate() {
 	//resetten
 	document.getElementById('debug').innerHTML = "Debug: <br>";
 	document.getElementById('ausgabe').innerHTML = " ";
 	
+	
+	//>>>>>>>>>>Textverarbeitung
 	var texta = document.getElementById('ursprung').value; //Ursprungstext
 	var textb = texta.split(''); //Text zerlegen
 	var x = textb.length;
 	
-	var fremdsprache = trill //ausgewählte Fremdsprache
-	
-	//Schriften festlegen
-	var schrift = "Arial";
-	var schriftfremd = fremdsprache[0];
-
 	//Wie viel wird übersetzt?	
-	var anzahlparameter = 5;
 	var auswahl = [];
 	var chance = [];
-	var faktor = [0,1.5,1,1,1,1]; //Faktor, wie sehr ein Bereich ins Gewicht fallen soll
 	for (var i = 1; i <= anzahlparameter; i++) {
 		auswahl[i] = document.getElementById('input'+i).value;
-		chance[i] = 100 - (Math.abs(fremdsprache[i] - auswahl[i]))*schwierigkeit;
+		chance[i] = max[i] - (Math.abs(fremdsprache.eigenschaften[i] - auswahl[i]))*schwierigkeit;
 		
-		//debug
+		//--debug
 		document.getElementById('debug').innerHTML += "<br>I:"+i;
 		document.getElementById('debug').innerHTML += " Auswahl:"+auswahl[i];
-		document.getElementById('debug').innerHTML += " Chance:"+chance[i];
+		document.getElementById('debug').innerHTML += " Chance:"+chance[i]*faktor[i];
+		console.log("I:"+i+" Auswahl:"+auswahl[i]+" Chance:"+chance[i]*faktor[i]);
 	}
-	
-	document.getElementById('debug').innerHTML += "<br>Vollstängige Chance: "+chance;
+	//--debug
+	//document.getElementById('debug').innerHTML += "<br>Vollstängige Chance: "+chance;
 	
 	//Gesamtwerte
 	var maxpunktzahl = 0;
 	var chanceGes = 0;
 	for (var i = 1; i <= anzahlparameter; i++) {
-		maxpunktzahl += 100 * faktor[i]; //gesamt erreichbare Punktzahl
-		chanceGes += chance[i] * faktor[i]; //gesamt erreichte Punktzahl
+		maxpunktzahl += max[i] *faktor[i]; //gesamt erreichbare Punktzahl
+		chanceGes += chance[i] *faktor[i]; //gesamt erreichte Punktzahl
 	}
-	var endchance = chanceGes*99/maxpunktzahl;
+	var endchance = chanceGes*99/maxpunktzahl; 
 	
+	//bekannte Wörter
+	var bekannteworter = document.getElementById('inputB1').value;
+	var worterarray = bekannteworter.split(",");
+	var worterlange = worterarray.length - 1;
+	var dieseswort;
+	var bonusdurchworte = 0;
+	//--debug
+	//document.getElementById('debug').innerHTML += "<br>Worterlange: "+worterlange;
 	
+	for (var i = 0; i <= worterlange; i++) {
+		dieseswort = worterarray[i];
+		worterarray[i] = 0;
+		
+		//--debug
+		//document.getElementById('debug').innerHTML += "<br>I:"+i;
+		//document.getElementById('debug').innerHTML += " -Dieseswort:"+ dieseswort;
+		//document.getElementById('debug').innerHTML += " -Worterarray:"+ worterarray;
+		
+		if (fremdsprache.worte.includes(dieseswort) == true && worterarray.includes(dieseswort) == false) {
+			bonusdurchworte += 20; //Wenn ein Schlüsselwort bekannt ist, gibt es einen Bonus
+		}
+		else if (dieseswort != ""){
+			bonusdurchworte -= 20; //Wenn ein falsches Wort eingegeben wird, gibt es Minus
+		}
+	}
+	endchance += bonusdurchworte;
+	//--debug
+	document.getElementById('debug').innerHTML += "<br>Bonus duch Worte:"+bonusdurchworte;
+	console.log("Bonus duch Worte:"+bonusdurchworte);
+
+	
+	//>>>>>>>>>>Textausgabe
 	for (var i = 0; i < x; i++) {
 		//Textfragmente als einzelne Spans ausgeben
 		document.getElementById("ausgabe").innerHTML += '<span id="op'+i+'">'+textb[i]+'</span>';
@@ -90,62 +279,109 @@ function translate() {
 			document.getElementById("op"+i).style.fontFamily = schriftfremd;
 		}	
 	}
+	
+	//>>>>>>>>>>Farbiger Punkt
+	//Farbinteger dürfen nur von 0 bis 255 gehen
+	function valBetween(v, min, max) {
+        return (Math.min(max, Math.max(min, v)));
+    }
+	var tiefstwert = -50*schwierigkeit;
+	var rotanteil = valBetween(Math.round(endchance*255/tiefstwert), 0, 255);
+	var grunanteil = valBetween(255-Math.round(endchance*255/tiefstwert), 0, 255);
+	function componentToHex(c) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
+	document.getElementById("indicatorpunkt").style.color = "#"+componentToHex(rotanteil)+componentToHex(grunanteil)+"00";
+	document.getElementById("indicatorpunkt").style.backgroundColor = "#"+componentToHex(rotanteil)+componentToHex(grunanteil)+"00";
+	console.log("Rotanteil: "+rotanteil);
+	console.log("Grünanteil: "+grunanteil);
 
-	document.getElementById('debug').innerHTML += "<br>EndChance: "+endchance;
-	//kommt durch?
+	//debug
 	//document.getElementById('debug').innerHTML += "hierher";
+	document.getElementById('debug').innerHTML += "<br>EndChance: "+endchance;
+	console.log("EndChance: "+endchance);
+	//kommt durch?
 	document.getElementById('debug').innerHTML += "<br>Kommt durch!";
+	console.log("Kommt durch");
 }
 //-->
 </script>
-
-<!-- Style -->
-<style>
-
-</style>
 </head>
 
-<body style="text-align:center">
-<textarea id='ursprung' style='font-family:Trill;'>Ursprungstext</textarea>
+<body>
+<section id="Inputs">
+	<section class="einheit">
+		<label class="nebeneinander" for="langinput">Sprache: </label>
+		<select id="langinput" class="nebeneinander"> 
+			<option value="trill">Trill</option> 
+			<option value="mvulcan">Modernes Vulkan</option> 
+			<option value="voth">Voth</option>
+			<option value="unbekannt">Unbekannt</option>
+		</select>
+	</section>
+	<section class="einheit">
+		<label class="nebeneinander" for="schwierigkeitsinput">Komplexität:</label>
+		<input type="number" id="schwierigkeitinput" value="10" style="width:2em;" class="nebeneinander"></input>
+	</section>
+	<button onclick="changelang();" style="margin:1em;">Sprache wechseln</button>
+</section>
+
+<h1>Originaltext:</h1>
+<input type="text" id='ursprung' value="Dies ist eine wichtige Botschaft, die dringend uebersetzt werden muss!"></input>
+
+<section id="Inputs">
+	<section class="einheit">
+		<label class="nebeneinander" for="inputB1">Bekannte Wörter: </label>
+		<input type="text" id="inputB1" class="nebeneinander"></input>
+	</section>
+	<section class="einheit">
+		<label class="nebeneinander" for="input1">Grammatik: </label>
+		<select id="input1" size="6" class="nebeneinander"> 
+			<option value=0>Typ A</option> 
+			<option value=1>Typ B</option> 
+			<option value=2>Typ C</option> 
+			<option value=3>Typ D</option> 
+			<option value=4>Typ E</option> 
+			<option value=5>Typ F</option>
+		</select>
+	</section>
+	<section class="einheit">
+		<label class="nebeneinander" for="input2">Anzahl Deklinationen: </label>
+		<input id="input2" type="range" min="1" max="50" class="slider" class="nebeneinander"></input>
+		<output id="input2Op" for="input2">1</output>
+	</section>
+	<section class="einheit">
+		<label class="nebeneinander" for="input3">Anzahl Konjugationen: </label>
+		<input id="input3" type="range" min="1" max="50" class="slider" class="nebeneinander"></input>
+		<output id="input3Op" for="input3">1</output>
+	</section>
+	<section class="einheit">
+		<label class="nebeneinander" for="input4">Anzahl Zeitformen: </label>
+		<input id="input4" type="range" min="1" max="50" class="slider" class="nebeneinander"></input>
+		<output id="input4Op" for="input4">1</output>
+	</section>
+	<section class="einheit">
+		<label class="nebeneinander" for="input5">Schriftform: </label>
+		<select id="input5" size="4" class="nebeneinander"> 
+			<option value=0>Alphabetschrift</option> 
+			<option value=1>Silbenschrift</option> 
+			<option value=2>Wortschrift</option> 
+			<option value=3>Bildschrift</option> 
+		</select>
+	</section>
+</section>
+
+<button onclick="faketranslate();" style="margin:1em;">Übersetzungsversuch starten</button>
+
+<div id="indicatorpunkt" class="kreis">&bull;</div>
+
+<div id='ausgabe'></div>
 <br>
-<label>Grammatik:
-	<select id="input1" size="6"> 
-		<option value=0>Typ A</option> 
-		<option value=20>Typ B</option> 
-		<option value=40>Typ C</option> 
-		<option value=60>Typ D</option> 
-		<option value=80>Typ E</option> 
-		<option value=100>Typ F</option>
-	</select>
-</label>
-<label>Anzahl Deklinationen:
-	<input id="input2" type="range" min="1" max="100" orient="vertical" class="slider"></input>
-	<output id="input2Op" for="input2">1</output>
-</label>
-<label>Anzahl Konjugationen:
-	<input id="input3" type="range" min="1" max="100" orient="vertical" class="slider"></input>
-	<output id="input3Op" for="input3">1</output>
-</label>
-<label>Anzahl Zeitformen:
-	<input id="input4" type="range" min="1" max="100" orient="vertical" class="slider"></input>
-	<output id="input4Op" for="input4">1</output>
-</label>
-<label>Schriftform:
-	<select id="input5" size="4"> 
-		<option value=0>Alphabetschrift</option> 
-		<option value=30>Silbenschrift</option> 
-		<option value=70>Wortschrift</option> 
-		<option value=100>Bildschrift</option> 
-	</select>
-</label>
- 
-<br>
-<button onclick="translate();">Übersetzen</button>
-<br>
-<div id='ausgabe' style='font-family:arial;'></div>
-<br>
-<div id='debug'></div>
+<!--Um die Debug-Anzeige zu sehen, muss das hidden entfernt werden-->
+<div id='debug' style='font-family:arial;' hidden></div>
 </body>
+
 <footer>
 <script type="text/javascript">
 //Anzeige für Slider 1
@@ -170,5 +406,6 @@ slider3.oninput = function() {
   output3.innerHTML = this.value;
 } 
 </script>
+<a href="impressum.html">Impressum</a>
 </footer>
 </html>
